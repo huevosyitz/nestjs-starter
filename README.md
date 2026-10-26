@@ -44,6 +44,73 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Postgres CRUD test setup
+
+This starter now includes a sample `users` CRUD API backed by PostgreSQL (TypeORM).
+
+### 1) Configure database environment variables
+
+Use either `DATABASE_URL` or the individual `DB_*` variables:
+
+```bash
+# Preferred (single connection string)
+export DATABASE_URL="postgres://USER:PASSWORD@HOST:5432/DB_NAME"
+
+# Optional fallback fields (used when DATABASE_URL is not set)
+export DB_HOST="localhost"
+export DB_PORT="5432"
+export DB_USER="postgres"
+export DB_PASSWORD="postgres"
+export DB_NAME="postgres"
+
+# For local quick testing only:
+export DB_SYNCHRONIZE="true"
+```
+
+> `DB_SYNCHRONIZE=true` auto-creates/updates tables. Keep it `false` in production.
+
+### 2) Start the app
+
+```bash
+npm run start:dev
+```
+
+### 3) Test CRUD endpoints
+
+Create:
+
+```bash
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Yitz","email":"yitz@example.com"}'
+```
+
+List:
+
+```bash
+curl http://localhost:3000/users
+```
+
+Get one:
+
+```bash
+curl http://localhost:3000/users/1
+```
+
+Update:
+
+```bash
+curl -X PATCH http://localhost:3000/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Yitz Updated"}'
+```
+
+Delete:
+
+```bash
+curl -X DELETE http://localhost:3000/users/1
+```
+
 ## Run tests
 
 ```bash

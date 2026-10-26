@@ -1,0 +1,38 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+###
+# Health check
+GET {{baseUrl}}/
+
+###
+# Create user
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Test User",
+  "email": "test.user@example.com"
+}
+
+###
+# List users
+GET {{baseUrl}}/users
+
+###
+# Get user by ID
+# Replace 1 with an existing user id if needed.
+GET {{baseUrl}}/users/1
+
+###
+# Update user by ID
+PATCH {{baseUrl}}/users/1
+Content-Type: {{contentType}}
+
+{
+  "name": "Updated User"
+}
+
+###
+# Delete user by ID
+DELETE {{baseUrl}}/users/1
