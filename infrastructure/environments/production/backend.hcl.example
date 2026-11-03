@@ -1,0 +1,6 @@
+bucket         = "replace-with-state-bucket"
+key            = "nestjs-starter/production/terraform.tfstate"
+region         = "us-east-1"
+encrypt        = true
+dynamodb_table = "replace-with-lock-table"
+

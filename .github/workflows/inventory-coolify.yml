@@ -1,0 +1,42 @@
+name: Inventory Coolify
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.13.5"
+
+      - name: OpenTofu init
+        working-directory: infrastructure/inventory
+        run: tofu init -backend=false
+
+      - name: OpenTofu apply (inventory read)
+        working-directory: infrastructure/inventory
+        env:
+          TF_VAR_coolify_endpoint: ${{ secrets.COOLIFY_ENDPOINT }}
+          TF_VAR_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
+        run: tofu apply -auto-approve
+
+      - name: Export inventory JSON
+        working-directory: infrastructure/inventory
+        run: tofu output -json > coolify-inventory.json
+
+      - name: Upload inventory artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coolify-inventory
+          path: infrastructure/inventory/coolify-inventory.json
+          if-no-files-found: error
+

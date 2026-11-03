@@ -1,0 +1,21 @@
+name: Policy Main PR Source
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  enforce-main-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce staging -> main source branch
+        run: |
+          if [ "${{ github.head_ref }}" != "staging" ]; then
+            echo "Only PRs from branch 'staging' may target 'main'. Current source: '${{ github.head_ref }}'."
+            exit 1
+          fi
+

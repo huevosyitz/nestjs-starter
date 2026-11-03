@@ -1,0 +1,44 @@
+name: CI Terraform
+
+on:
+  pull_request:
+    branches:
+      - staging
+      - main
+    paths:
+      - "infrastructure/**"
+
+permissions:
+  contents: read
+
+jobs:
+  tofu-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.13.5"
+
+      - name: OpenTofu fmt check
+        working-directory: infrastructure
+        run: tofu fmt -check -recursive
+
+      - name: OpenTofu init (staging module validation)
+        working-directory: infrastructure/environments/staging
+        run: tofu init -backend=false
+
+      - name: OpenTofu validate (staging)
+        working-directory: infrastructure/environments/staging
+        run: tofu validate
+
+      - name: OpenTofu init (production module validation)
+        working-directory: infrastructure/environments/production
+        run: tofu init -backend=false
+
+      - name: OpenTofu validate (production)
+        working-directory: infrastructure/environments/production
+        run: tofu validate

@@ -1,0 +1,12 @@
+coolify_endpoint = "https://coolify.lumiovera.com"
+coolify_token    = "set-in-local-tfvars-or-env"
+
+server_uuid     = "replace-with-coolify-server-uuid"
+github_app_uuid = "replace-with-coolify-github-app-uuid"
+# destination_uuid = "optional-when-server-has-multiple-destinations"
+
+postgres_password = "replace-with-strong-production-password"
+
+deploy_on_apply       = false
+deployment_commit_sha = ""
+

@@ -50,24 +50,18 @@ This starter now includes a sample `users` CRUD API backed by PostgreSQL (TypeOR
 
 ### 1) Configure database environment variables
 
-Use either `DATABASE_URL` or the individual `DB_*` variables:
+Use `DATABASE_URL` as the canonical database configuration:
 
 ```bash
-# Preferred (single connection string)
-export DATABASE_URL="postgres://USER:PASSWORD@HOST:5432/DB_NAME"
+# Required
+export DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME"
 
-# Optional fallback fields (used when DATABASE_URL is not set)
-export DB_HOST="localhost"
-export DB_PORT="5432"
-export DB_USER="postgres"
-export DB_PASSWORD="postgres"
-export DB_NAME="postgres"
-
-# For local quick testing only:
-export DB_SYNCHRONIZE="true"
+# Optional
+export DB_SSL="false"
+export DB_SYNCHRONIZE="false"
 ```
 
-> `DB_SYNCHRONIZE=true` auto-creates/updates tables. Keep it `false` in production.
+> `DB_SYNCHRONIZE=true` auto-creates/updates tables and should remain disabled outside disposable local environments.
 
 ### 2) Start the app
 
@@ -124,9 +118,39 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Health endpoint
+
+```bash
+curl http://localhost:3000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+## Database migrations
+
+```bash
+# show pending/applied migrations
+$ npm run migration:show
+
+# apply migrations
+$ npm run migration:run
+
+# revert latest migration
+$ npm run migration:revert
+```
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+For this repository's Coolify + Terraform deployment workflow, start with:
+
+- [infrastructure/README.md](./infrastructure/README.md)
+- [docs/infrastructure/README.md](./docs/infrastructure/README.md)
 
 If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
 

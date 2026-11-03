@@ -14,21 +14,17 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ObserveModule.forRoot({
       appKey: process.env.OBSERVE_APP_KEY ?? '',
       appSecret: process.env.OBSERVE_APP_SECRET ?? '',
-      runtimeMetrics: !Boolean(process.versions?.['webcontainer']),
+      runtimeMetrics: !process.versions?.['webcontainer'],
       serviceId: 'nest-typescript-starter',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
-      host: process.env.DB_HOST ?? 'localhost',
-      port: Number(process.env.DB_PORT ?? 5432),
-      username: process.env.DB_USER ?? 'postgres',
-      password: process.env.DB_PASSWORD ?? 'postgres',
-      database: process.env.DB_NAME ?? 'postgres',
       ssl:
         process.env.DB_SSL === 'true'
           ? { rejectUnauthorized: false }
           : false,
+      migrations: ['dist/database/migrations/*.js'],
       autoLoadEntities: true,
       synchronize: process.env.DB_SYNCHRONIZE === 'true',
     }),

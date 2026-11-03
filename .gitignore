@@ -2,6 +2,8 @@
 
 # project files
 .env
+.env.local
+.env.*.local
 
 # compiled output
 /dist
@@ -27,3 +29,13 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+backend.hcl
+*.tfplan
+crash.log

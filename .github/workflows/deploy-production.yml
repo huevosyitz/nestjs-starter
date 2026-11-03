@@ -1,0 +1,55 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_commit_sha:
+        description: "Commit SHA being released to production (informational trigger)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: "1.13.5"
+
+      - name: OpenTofu init
+        working-directory: infrastructure/environments/production
+        run: |
+          tofu init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=nestjs-starter/production/terraform.tfstate" \
+            -backend-config="region=${{ secrets.TF_STATE_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.TF_LOCK_TABLE }}"
+
+      - name: OpenTofu plan
+        working-directory: infrastructure/environments/production
+        env:
+          TF_VAR_coolify_endpoint: ${{ secrets.COOLIFY_ENDPOINT }}
+          TF_VAR_coolify_token: ${{ secrets.COOLIFY_TOKEN }}
+          TF_VAR_server_uuid: ${{ secrets.COOLIFY_SERVER_UUID }}
+          TF_VAR_github_app_uuid: ${{ secrets.COOLIFY_GITHUB_APP_UUID }}
+          TF_VAR_destination_uuid: ${{ secrets.COOLIFY_DESTINATION_UUID }}
+          TF_VAR_postgres_password: ${{ secrets.PRODUCTION_POSTGRES_PASSWORD }}
+          TF_VAR_deploy_on_apply: true
+          TF_VAR_deployment_commit_sha: ${{ inputs.deployment_commit_sha }}
+        run: tofu plan -out=tfplan
+
+      - name: OpenTofu apply
+        working-directory: infrastructure/environments/production
+        run: tofu apply tfplan
+
+      - name: Verify production health
+        run: curl --fail --silent --show-error https://api.lumiovera.com/health
