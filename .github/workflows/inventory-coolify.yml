@@ -16,7 +16,7 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: "1.13.5"
+          tofu_version: "latest"
 
       - name: OpenTofu init
         working-directory: infrastructure/inventory
@@ -39,4 +39,3 @@ jobs:
           name: coolify-inventory
           path: infrastructure/inventory/coolify-inventory.json
           if-no-files-found: error
-
